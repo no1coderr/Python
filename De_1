@@ -1,0 +1,90 @@
+def nhap_danh_sach():
+    while True:
+        n = int(input("Nhập n (1 < n < 100): "))
+        if 1 < n < 100:
+            break
+        else:
+            print("Giá trị n không hợp lệ. Nhập lại!")
+    lst = []
+    for i in range(n):
+        x = int(input(f"Nhập phần tử thứ {i+1}: "))
+        lst.append(x)
+    return lst
+
+def loai_bo_so_khong_duong(lst):
+    return [x for x in lst if x > 0]
+
+def la_doi_xung(x):
+    s = str(x)
+    return s == s[::-1]
+
+def in_so_doi_xung(lst):
+    ds = [x for x in lst if la_doi_xung(x)]
+    if ds:
+        print("Các số đối xứng:", ds)
+    else:
+        print("Không có số đối xứng nào.")
+
+def la_nguyen_to(x):
+    if x < 2:
+        return False
+    for i in range(2, int(x**0.5)+1):
+        if x % i == 0:
+            return False
+    return True
+
+def in_so_nguyen_to(lst):
+    ds = [x for x in lst if la_nguyen_to(x)]
+    if ds:
+        print("Các số nguyên tố:", ds)
+    else:
+        print("Không có số nguyên tố nào.")
+
+def day_tang_dai_nhat(lst):
+    max_len = 1
+    cur_len = 1
+    start = 0
+    max_start = 0
+    for i in range(1, len(lst)):
+        if lst[i] > lst[i-1]:
+            cur_len += 1
+        else:
+            if cur_len > max_len:
+                max_len = cur_len
+                max_start = start
+            cur_len = 1
+            start = i
+    if cur_len > max_len:
+        max_len = cur_len
+        max_start = start
+    return lst[max_start:max_start+max_len]
+
+def menu_de1():
+    lst = []
+    while True:
+        print("\n===== MENU - ĐỀ 1 =====")
+        print("1. Nhập danh sách")
+        print("2. Loại bỏ số ≤ 0")
+        print("3. In số đối xứng")
+        print("4. In số nguyên tố")
+        print("5. Tìm dãy con tăng dần dài nhất")
+        print("0. Thoát")
+        chon = input("Chọn: ")
+
+        if chon == "1":
+            lst = nhap_danh_sach()
+        elif chon == "2":
+            lst = loai_bo_so_khong_duong(lst)
+            print("Danh sách sau khi loại bỏ:", lst)
+        elif chon == "3":
+            in_so_doi_xung(lst)
+        elif chon == "4":
+            in_so_nguyen_to(lst)
+        elif chon == "5":
+            print("Dãy con tăng dần dài nhất:", day_tang_dai_nhat(lst))
+        elif chon == "0":
+            break
+        else:
+            print("Lựa chọn không hợp lệ!")
+
+menu_de1()
