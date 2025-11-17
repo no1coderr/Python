@@ -1,0 +1,160 @@
+from abc import ABC, abstractmethod
+from datetime import date
+
+# ===============================
+# 1. LỚP TRỪU TƯỢNG + ĐÓNG GÓI
+# ===============================
+class ConNguoi(ABC):
+    def __init__(self):
+        self._ten = ""        # protected
+        self._que = ""        # protected
+        self._nam_sinh = 0    # protected
+
+    @abstractmethod
+    def nhap(self):
+        pass
+
+    @abstractmethod
+    def xuat(self):
+        pass
+
+    def tinh_tuoi(self):
+        return date.today().year - self._nam_sinh
+
+
+# ===============================
+# 2. LỚP BỆNH NHÂN (INHERITANCE)
+# ===============================
+class BenhNhan(ConNguoi):
+    def nhap(self):
+        self._ten = input("Nhập tên bệnh nhân: ")
+        self._que = input("Nhập quê quán: ")
+        self._nam_sinh = int(input("Nhập năm sinh: "))
+
+    def xuat(self):
+        print(f"{self._ten:<20} {self._que:<15} {self._nam_sinh:<10}", end="")
+
+    # Nạp chồng toán tử ==
+    def __eq__(self, other):
+        return self._ten.lower() == other._ten.lower()
+
+
+# ===============================
+# 3. LỚP BỆNH ÁN (POLYMORPHISM)
+# ===============================
+class BenhAn(BenhNhan):
+    def __init__(self):
+        super().__init__()
+        self.__ten_benh_an = ""   # private
+        self.__vien_phi = 0       # private
+
+    def nhap(self):
+        super().nhap()
+        self.__ten_benh_an = input("Nhập tên bệnh án: ")
+        self.__vien_phi = float(input("Nhập viện phí: "))
+
+    def xuat(self):
+        super().xuat()
+        print(f"{self.__ten_benh_an:<20} {self.__vien_phi:<10}")
+
+    def get_vien_phi(self):
+        return self.__vien_phi
+
+    # Nạp chồng toán tử <
+    def __lt__(self, other):
+        return self.__vien_phi < other.__vien_phi
+
+
+# ===============================
+# 4. QUẢN LÝ DANH SÁCH BỆNH ÁN
+# ===============================
+class QuanLyBenhAn:
+    def __init__(self):
+        self.ds = []
+
+    # Nhập n bệnh án
+    def nhap_ds(self):
+        n = int(input("Nhập số lượng bệnh án: "))
+        for i in range(n):
+            print(f"\n--- Nhập bệnh án thứ {i+1} ---")
+            ba = BenhAn()
+            ba.nhap()
+            self.ds.append(ba)
+
+    # Xuất danh sách
+    def xuat_ds(self):
+        print("\n{:<20} {:<15} {:<10} {:<20} {:<10}".format("Tên", "Quê quán", "Năm sinh", "Tên bệnh án", "Viện phí"))
+        for ba in self.ds:
+            ba.xuat()
+
+    # Sắp xếp theo tuổi giảm dần
+    def sap_xep_tuoi_giam(self):
+        self.ds.sort(key=lambda x: x.tinh_tuoi(), reverse=True)
+
+    # Bệnh án tuổi > 50
+    def tuoi_tren_50(self):
+        return [ba for ba in self.ds if ba.tinh_tuoi() > 50]
+
+    # Tìm max/min viện phí
+    def benh_an_vien_phi_max(self):
+        return max(self.ds)
+
+    def benh_an_vien_phi_min(self):
+        return min(self.ds)
+
+    # Tìm kiếm theo tên (dùng ==)
+    def tim_theo_ten(self, ten):
+        temp = BenhNhan()
+        temp._ten = ten
+        return [ba for ba in self.ds if ba == temp]
+
+    # Xóa bệnh án theo tên
+    def xoa_theo_ten(self, ten):
+        self.ds = [ba for ba in self.ds if ba._ten.lower() != ten.lower()]
+
+
+# ===============================
+# 5. HÀM MAIN
+# ===============================
+def main():
+    ql = QuanLyBenhAn()
+    ql.nhap_ds()
+
+    print("\n=== DANH SÁCH BỆNH ÁN ===")
+    ql.xuat_ds()
+
+    print("\n=== SẮP XẾP THEO TUỔI GIẢM DẦN ===")
+    ql.sap_xep_tuoi_giam()
+    ql.xuat_ds()
+
+    print("\n=== BỆNH NHÂN TUỔI > 50 ===")
+    for ba in ql.tuoi_tren_50():
+        ba.xuat()
+
+    print("\n=== BỆNH ÁN VIỆN PHÍ CAO NHẤT ===")
+    ql.benh_an_vien_phi_max().xuat()
+
+    print("\n=== BỆNH ÁN VIỆN PHÍ THẤP NHẤT ===")
+    ql.benh_an_vien_phi_min().xuat()
+
+    ten_tim = input("\nNhập tên bệnh nhân cần tìm: ")
+    kq = ql.tim_theo_ten(ten_tim)
+    if kq:
+        print(f"\n=== KẾT QUẢ TÌM KIẾM '{ten_tim}' ===")
+        for ba in kq:
+            ba.xuat()
+    else:
+        print("Không tìm thấy bệnh nhân!")
+
+    # Xóa bệnh án
+    ten_xoa = input("\nNhập tên bệnh nhân cần xóa: ")
+    ql.xoa_theo_ten(ten_xoa)
+    print("\n=== DANH SÁCH SAU KHI XÓA ===")
+    ql.xuat_ds()
+
+
+# ===============================
+# RUN
+# ===============================
+if __name__ == "__main__":
+    main()
