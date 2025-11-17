@@ -1,0 +1,148 @@
+from datetime import date
+
+class BenhNhan:
+    def __init__(self):
+        self.ten = ""
+        self.que = ""
+        self.nam_sinh = 0
+
+    def nhap(self):
+        self.ten = input("Nhập tên bệnh nhân: ")
+        self.que = input("Nhập quê quán: ")
+        self.nam_sinh = int(input("Nhập năm sinh: "))
+
+    def xuat(self):
+        print(f"{self.ten:<20} {self.que:<15} {self.nam_sinh:<10}", end="")
+
+    def tinh_tuoi(self):
+        return date.today().year - self.nam_sinh
+
+
+class BenhAn(BenhNhan):
+    def __init__(self):
+        super().__init__()
+        self.ten_benh_an = ""
+        self.vien_phi = 0
+
+    def nhap(self):
+        super().nhap()
+        self.ten_benh_an = input("Nhập tên bệnh án: ")
+        self.vien_phi = float(input("Nhập viện phí: "))
+
+    def xuat(self):
+        super().xuat()
+        print(f"{self.ten_benh_an:<20} {self.vien_phi:<10}")
+
+# ==========================
+#       CHƯƠNG TRÌNH CHÍNH
+# ==========================
+ds = []
+
+n = int(input("Nhập số lượng bệnh án: "))
+for i in range(n):
+    print(f"\nNhập bệnh án thứ {i+1}:")
+    ba = BenhAn()
+    ba.nhap()
+    ds.append(ba)
+
+print("\n=== DANH SÁCH BỆNH ÁN ===")
+for ba in ds:
+    ba.xuat()
+
+# 1. Sắp xếp theo tuổi giảm dần
+ds.sort(key=lambda x: x.tinh_tuoi(), reverse=True)
+
+print("\n=== DANH SÁCH SAU KHI SẮP XẾP THEO TUỔI GIẢM DẦN ===")
+for ba in ds:
+    ba.xuat()
+
+# 2. In bệnh nhân tuổi > 50
+print("\n=== BỆNH NHÂN TUỔI > 50 ===")
+for ba in ds:
+    if ba.tinh_tuoi() > 50:
+        ba.xuat()
+
+# 3. Bệnh án có viện phí cao nhất
+max_vp = max(ds, key=lambda x: x.vien_phi)
+
+print("\n=== BỆNH ÁN CÓ VIỆN PHÍ CAO NHẤT ===")
+max_vp.xuat()
+class AnPham:
+    def __init__(self):
+        self.ten = ""
+        self.gia = 0
+
+    def nhap(self):
+        self.ten = input("Nhập tên ấn phẩm: ")
+        self.gia = float(input("Nhập giá thành: "))
+
+    def hien_thi(self):
+        print(f"{self.ten:<25} {self.gia:<10}", end="")
+
+
+class Sach(AnPham):
+    def __init__(self):
+        super().__init__()
+        self.so_trang = 0
+
+    def nhap(self):
+        super().nhap()
+        self.so_trang = int(input("Nhập số trang: "))
+
+    def hien_thi(self):
+        super().hien_thi()
+        print(f"{self.so_trang:<10}")
+
+
+class DiaCD(AnPham):
+    def __init__(self):
+        super().__init__()
+        self.so_phut = 0
+
+    def nhap(self):
+        super().nhap()
+        self.so_phut = int(input("Nhập số phút: "))
+
+    def hien_thi(self):
+        super().hien_thi()
+        print(f"{self.so_phut:<10}")
+
+
+# ======================
+#     CHƯƠNG TRÌNH CHÍNH
+# ======================
+
+# --- Danh sách Sách ---
+ns = int(input("Nhập số lượng sách: "))
+ds_sach = []
+for i in range(ns):
+    print(f"\nNhập sách thứ {i+1}:")
+    s = Sach()
+    s.nhap()
+    ds_sach.append(s)
+
+print("\n=== SÁCH CÓ SỐ TRANG > 500 ===")
+for s in ds_sach:
+    if s.so_trang > 500:
+        s.hien_thi()
+
+# --- Danh sách CD ---
+nc = int(input("\nNhập số lượng CD: "))
+ds_cd = []
+for i in range(nc):
+    print(f"\nNhập CD thứ {i+1}:")
+    cd = DiaCD()
+    cd.nhap()
+    ds_cd.append(cd)
+
+ten_tim = input("\nNhập tên CD cần tìm: ")
+
+print("\n=== KẾT QUẢ TÌM KIẾM CD ===")
+found = False
+for cd in ds_cd:
+    if cd.ten.lower() == ten_tim.lower():
+        cd.hien_thi()
+        found = True
+
+if not found:
+    print("Không tìm thấy CD!")
